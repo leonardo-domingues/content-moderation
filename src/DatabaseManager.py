@@ -41,10 +41,10 @@ class DatabaseManager:
 
 
     def get_post_ids(self, only_unverified: bool = False, limit: Optional[int] = None) -> List[int]:
+        query_language_suffix = f" WHERE hasFoulLanguage={int(FoulLanguageStatus.UNVERIFIED)}" if only_unverified else ""
+        query_limit_suffix = f" limit {limit}" if limit else ""
+        query = f"SELECT id FROM posts{query_language_suffix}{query_limit_suffix};"
         with closing(sqlite3.connect(self.location)) as connection:
-            query_language_suffix = f" WHERE hasFoulLanguage={int(FoulLanguageStatus.UNVERIFIED)}" if only_unverified else ""
-            query_limit_suffix = f" limit {limit}" if limit else ""
-            query = f"SELECT id FROM posts{query_language_suffix}{query_limit_suffix};"
             with closing(connection.cursor()) as cursor:
                 cursor.execute(query)
                 records = cursor.fetchall()
@@ -52,9 +52,9 @@ class DatabaseManager:
 
 
     def get_post_paragraphs(self, post_id: int, only_unverified: bool = False) -> Dict[int, str]:
+        query_language_suffix = f" AND hasFoulLanguage={int(FoulLanguageStatus.UNVERIFIED)}" if only_unverified else ""
+        query = f"SELECT id, content FROM paragraphs WHERE postId={post_id}{query_language_suffix};"
         with closing(sqlite3.connect(self.location)) as connection:
-            query_language_suffix = f" AND hasFoulLanguage={int(FoulLanguageStatus.UNVERIFIED)}" if only_unverified else ""
-            query = f"SELECT id, content FROM paragraphs WHERE postId={post_id}{query_language_suffix};"
             with closing(connection.cursor()) as cursor:
                 cursor.execute(query)
                 records = cursor.fetchall()
@@ -62,8 +62,17 @@ class DatabaseManager:
 
 
     def update_paragraphs_status(self, new_status: Dict[int, Type[FoulLanguageStatus]]) -> None:
-        pass
+        with closing(sqlite3.connect(self.location)) as connection:
+            with closing(connection.cursor()) as cursor:
+                for id, status in new_status.items():
+                    query = f"UPDATE paragraphs SET hasFoulLanguage={int(status)} WHERE id={id};"
+                    cursor.execute(query)
+                connection.commit()
 
 
     def update_post_status(self, post_id: int, new_status: Type[FoulLanguageStatus]) -> None:
-        pass
+        with closing(sqlite3.connect(self.location)) as connection:
+            with closing(connection.cursor()) as cursor:
+                query = f"UPDATE posts SET hasFoulLanguage={int(new_status)} WHERE id={post_id};"
+                cursor.execute(query)
+                connection.commit()

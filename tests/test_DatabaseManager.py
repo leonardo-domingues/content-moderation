@@ -60,3 +60,13 @@ def test_update_paragraph_status_has_foul(test_manager):
     test_manager.update_paragraphs_status({(post_id-1)*TEST_DB_NUM_PARAGRAPHS+i:FoulLanguageStatus.HAS_FOUL_LANGUAGE for i in range(1, TEST_DB_NUM_PARAGRAPHS+1)})
     paragraphs = test_manager.get_post_paragraphs(post_id, only_unverified=True)
     assert paragraphs == {}
+
+def test_check_post_has_foul_paragraph(test_manager):
+    post_id = 2
+    paragraph_id = (post_id-1)*TEST_DB_NUM_PARAGRAPHS+1
+    test_manager.update_paragraphs_status({paragraph_id: FoulLanguageStatus.HAS_FOUL_LANGUAGE})
+    assert test_manager.check_post_has_foul_paragraph(post_id) == True
+
+def test_check_post_has_foul_paragraph_false(test_manager):
+    post_id = 2
+    assert test_manager.check_post_has_foul_paragraph(post_id) == False

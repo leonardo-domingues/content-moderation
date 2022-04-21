@@ -76,3 +76,11 @@ class DatabaseManager:
                 query = f"UPDATE posts SET hasFoulLanguage={int(new_status)} WHERE id={post_id};"
                 cursor.execute(query)
                 connection.commit()
+
+    def check_post_has_foul_paragraph(self, post_id: int) -> bool:
+        query = f"SELECT id FROM paragraphs WHERE postId={post_id} AND hasFoulLanguage={int(FoulLanguageStatus.HAS_FOUL_LANGUAGE)};"
+        with closing(sqlite3.connect(self.location)) as connection:
+            with closing(connection.cursor()) as cursor:
+                cursor.execute(query)
+                records = cursor.fetchall()
+        return len(records) > 0

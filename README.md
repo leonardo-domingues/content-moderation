@@ -15,8 +15,6 @@ I ended up using NLTK to separate the paragraphs into sentences so I had a more 
 ```
 Then, press `d` for download and install the `punkt` package.
 
-The scripts `run_api_and_moderator.sh` can be used to launch both the REST API controller and the ContentModerator process, although there is not much use to running them, seeing as the API to process sentences is not available. Running this script will launch the REST API, but the ContentModerator will continuously try to process every blog post found in the database.
-
-The python scripts `src/launch_API.py` and `src/launch_ContentModerator.py` can be used directly to launch each part of the solution separately, but they require the `PYTHONPATH` environment variable to be set as the root directory of the repository.
+The python scripts `src/launch_API.py` and `src/launch_ContentModerator.py` can be used directly to launch each part of the solution separately, but they require the `PYTHONPATH` environment variable to be set as the root directory of the repository. I've added two bash scripts to the root that already do that for convenience (`run_api.sh` and `run_moderator.sh`).
 
 The `run_tests.sh` can be used to run the unit tests.

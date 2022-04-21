@@ -46,4 +46,5 @@ class APIController:
         self.port = port
 
     def start(self):
+        print(f"[APIController] Listening on host {self.host} port {self.port}.")
         app.run(self.host, self.port)

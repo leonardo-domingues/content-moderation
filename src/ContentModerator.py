@@ -63,6 +63,7 @@ class ContentModerator:
         while True:
             post_ids = self.database_manager.get_post_ids(only_unverified=True, limit=1)
             for post_id in post_ids:
+                print(f"[ContentModerator] Verifying post {post_id}")
                 self.validate_post(post_id)
 
             time.sleep(ContentModerator.SLEEP_TIMER)
